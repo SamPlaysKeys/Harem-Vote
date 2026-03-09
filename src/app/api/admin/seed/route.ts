@@ -1,20 +1,30 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { seedAdminUser } from '@/lib/seed-admin';
 
-export async function POST() {
+async function handleSeed(request: NextRequest) {
   try {
-    const admin = await seedAdminUser();
+    const { searchParams } = new URL(request.url);
+    const reset = searchParams.get('reset') === 'true';
 
-    if (!admin) {
+    const result = await seedAdminUser(reset);
+
+    if (result.action === 'skipped') {
       return NextResponse.json(
         { message: 'No admin credentials configured' },
         { status: 200 }
       );
     }
 
+    const messages = {
+      created: 'Admin user created',
+      exists: 'Admin user already exists',
+      reset: 'Admin password reset successfully',
+    };
+
     return NextResponse.json({
-      message: 'Admin user ready',
-      username: admin.username,
+      message: messages[result.action],
+      username: result.user?.username,
+      action: result.action,
     });
   } catch (error) {
     console.error('Error seeding admin:', error);
@@ -25,6 +35,10 @@ export async function POST() {
   }
 }
 
-export async function GET() {
-  return POST();
+export async function POST(request: NextRequest) {
+  return handleSeed(request);
+}
+
+export async function GET(request: NextRequest) {
+  return handleSeed(request);
 }

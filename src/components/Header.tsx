@@ -2,6 +2,7 @@
 
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
+import { appConfig } from '@/lib/config';
 
 export function Header() {
   const { data: session, status } = useSession();
@@ -14,7 +15,7 @@ export function Header() {
           href="/"
           className="text-xl font-bold text-zinc-900 dark:text-zinc-100"
         >
-          Harem Vote
+          {appConfig.title}
         </Link>
 
         <nav className="flex items-center gap-4">

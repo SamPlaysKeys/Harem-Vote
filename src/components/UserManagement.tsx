@@ -8,6 +8,7 @@ type User = {
   email: string;
   name: string | null;
   isAdmin: boolean;
+  isActive: boolean;
   createdAt: string;
   _count: {
     topics: number;
@@ -15,8 +16,14 @@ type User = {
   };
 };
 
+type UsersResponse = {
+  users: User[];
+  activeCount: number;
+  maxActiveUsers: number;
+};
+
 export function UserManagement() {
-  const [users, setUsers] = useState<User[]>([]);
+  const [data, setData] = useState<UsersResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -26,8 +33,8 @@ export function UserManagement() {
     try {
       const res = await fetch('/api/admin/users');
       if (!res.ok) throw new Error('Failed to fetch users');
-      const data = await res.json();
-      setUsers(data);
+      const json = await res.json();
+      setData(json);
     } catch {
       setError('Failed to load users');
     } finally {
@@ -50,8 +57,8 @@ export function UserManagement() {
       });
 
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Failed to delete user');
+        const json = await res.json();
+        throw new Error(json.error || 'Failed to delete user');
       }
 
       fetchUsers();
@@ -69,8 +76,27 @@ export function UserManagement() {
       });
 
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Failed to update user');
+        const json = await res.json();
+        throw new Error(json.error || 'Failed to update user');
+      }
+
+      fetchUsers();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to update user');
+    }
+  };
+
+  const handleToggleActive = async (user: User) => {
+    try {
+      const res = await fetch(`/api/admin/users/${user.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isActive: !user.isActive }),
+      });
+
+      if (!res.ok) {
+        const json = await res.json();
+        throw new Error(json.error || 'Failed to update user');
       }
 
       fetchUsers();
@@ -87,17 +113,36 @@ export function UserManagement() {
     );
   }
 
-  if (error) {
+  if (error || !data) {
     return (
       <div className="rounded-lg bg-red-50 p-4 text-red-600 dark:bg-red-900/20 dark:text-red-400">
-        {error}
+        {error || 'Failed to load users'}
       </div>
     );
   }
 
+  const { users, activeCount, maxActiveUsers } = data;
+  const canCreateActive = activeCount < maxActiveUsers;
+
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <span
+            className={`rounded-lg px-3 py-1 text-sm font-medium ${
+              canCreateActive
+                ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+            }`}
+          >
+            {activeCount} / {maxActiveUsers} active users
+          </span>
+          {!canCreateActive && (
+            <span className="text-sm text-zinc-500">
+              Deactivate a user to allow new registrations
+            </span>
+          )}
+        </div>
         <button
           onClick={() => setShowCreateForm(true)}
           className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
@@ -117,6 +162,9 @@ export function UserManagement() {
                 Email
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                Status
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                 Role
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
@@ -129,7 +177,10 @@ export function UserManagement() {
           </thead>
           <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
             {users.map((user) => (
-              <tr key={user.id}>
+              <tr
+                key={user.id}
+                className={!user.isActive ? 'opacity-60' : ''}
+              >
                 <td className="whitespace-nowrap px-6 py-4">
                   <div>
                     <p className="font-medium text-zinc-900 dark:text-zinc-100">
@@ -140,6 +191,17 @@ export function UserManagement() {
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-600 dark:text-zinc-400">
                   {user.email}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4">
+                  <span
+                    className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
+                      user.isActive
+                        ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                        : 'bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-500'
+                    }`}
+                  >
+                    {user.isActive ? 'Active' : 'Inactive'}
+                  </span>
                 </td>
                 <td className="whitespace-nowrap px-6 py-4">
                   <span
@@ -164,6 +226,16 @@ export function UserManagement() {
                       Edit
                     </button>
                     <button
+                      onClick={() => handleToggleActive(user)}
+                      className={`text-sm ${
+                        user.isActive
+                          ? 'text-zinc-600 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300'
+                          : 'text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300'
+                      }`}
+                    >
+                      {user.isActive ? 'Deactivate' : 'Activate'}
+                    </button>
+                    <button
                       onClick={() => handleToggleAdmin(user)}
                       className="text-sm text-amber-600 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300"
                     >
@@ -185,6 +257,7 @@ export function UserManagement() {
 
       {showCreateForm && (
         <CreateUserModal
+          canCreateActive={canCreateActive}
           onClose={() => setShowCreateForm(false)}
           onSuccess={() => {
             setShowCreateForm(false);
@@ -208,9 +281,11 @@ export function UserManagement() {
 }
 
 function CreateUserModal({
+  canCreateActive,
   onClose,
   onSuccess,
 }: {
+  canCreateActive: boolean;
   onClose: () => void;
   onSuccess: () => void;
 }) {
@@ -220,6 +295,7 @@ function CreateUserModal({
     password: '',
     name: '',
     isAdmin: false,
+    isActive: canCreateActive,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -296,19 +372,38 @@ function CreateUserModal({
             minLength={8}
             className="w-full rounded-lg border border-zinc-300 px-4 py-2 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
           />
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={formData.isAdmin}
-              onChange={(e) =>
-                setFormData({ ...formData, isAdmin: e.target.checked })
-              }
-              className="rounded"
-            />
-            <span className="text-sm text-zinc-700 dark:text-zinc-300">
-              Admin privileges
-            </span>
-          </label>
+          <div className="space-y-2">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={formData.isActive}
+                onChange={(e) =>
+                  setFormData({ ...formData, isActive: e.target.checked })
+                }
+                disabled={!canCreateActive && formData.isActive}
+                className="rounded"
+              />
+              <span className="text-sm text-zinc-700 dark:text-zinc-300">
+                Active
+              </span>
+              {!canCreateActive && (
+                <span className="text-xs text-red-500">(limit reached)</span>
+              )}
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={formData.isAdmin}
+                onChange={(e) =>
+                  setFormData({ ...formData, isAdmin: e.target.checked })
+                }
+                className="rounded"
+              />
+              <span className="text-sm text-zinc-700 dark:text-zinc-300">
+                Admin privileges
+              </span>
+            </label>
+          </div>
 
           {error && <p className="text-sm text-red-600">{error}</p>}
 
