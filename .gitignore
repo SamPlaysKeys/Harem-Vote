@@ -30,8 +30,12 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files - keep .env.example
+.env
+.env.local
+.env.development
+.env.production
+.env*.local
 
 # vercel
 .vercel
@@ -40,4 +44,19 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Prisma
 /src/generated/prisma
+
+# Ansible secrets (keep vault.yml.example)
+ansible/group_vars/vault.yml
+
+# Cursor IDE
+.cursor/plans/
+.cursor/rules/
+
+# Editor
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
