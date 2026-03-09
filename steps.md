@@ -1,11 +1,11 @@
 # Project Progress Tracker
 
-## Status: Not Started
+## Status: Phase 1 Complete
 
 ### Phase 1: Project Initialization
-- [ ] Initialize Next.js repository with TypeScript and Tailwind CSS.
-- [ ] Setup ESLint and Prettier for code formatting.
-- [ ] Initialize Docker and `docker-compose.yml` for local PostgreSQL database.
+- [x] Initialize Next.js repository with TypeScript and Tailwind CSS.
+- [x] Setup ESLint and Prettier for code formatting.
+- [x] Initialize Docker and `docker-compose.yml` for local PostgreSQL database.
 
 ### Phase 2: Database & Authentication
 - [ ] Setup Prisma ORM and connect to PostgreSQL.
