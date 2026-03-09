@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { hash } from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
+import { canCreateActiveUser, MAX_ACTIVE_USERS } from '@/lib/user-limits';
 import { z } from 'zod';
 
 const registerSchema = z.object({
@@ -30,6 +31,14 @@ export async function POST(request: NextRequest) {
 
     const { username, email, password, name } = result.data;
 
+    const canCreate = await canCreateActiveUser();
+    if (!canCreate) {
+      return NextResponse.json(
+        { error: `Registration is currently closed. Maximum of ${MAX_ACTIVE_USERS} active users reached.` },
+        { status: 403 }
+      );
+    }
+
     const existingUser = await prisma.user.findFirst({
       where: {
         OR: [{ username }, { email }],
@@ -53,6 +62,7 @@ export async function POST(request: NextRequest) {
         password: hashedPassword,
         name,
         isAdmin: false,
+        isActive: true,
       },
     });
 

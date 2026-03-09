@@ -39,7 +39,7 @@ export function Header() {
                   href="/admin"
                   className="text-sm text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300"
                 >
-                  Admin
+                  Users
                 </Link>
               )}
               <div className="flex items-center gap-3">

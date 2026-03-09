@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { hash } from 'bcryptjs';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { canCreateActiveUser, getActiveUserCount, MAX_ACTIVE_USERS } from '@/lib/user-limits';
 import { z } from 'zod';
 
 async function requireAdmin() {
@@ -18,25 +19,33 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
   }
 
-  const users = await prisma.user.findMany({
-    select: {
-      id: true,
-      username: true,
-      email: true,
-      name: true,
-      isAdmin: true,
-      createdAt: true,
-      _count: {
-        select: {
-          topics: true,
-          votes: true,
+  const [users, activeCount] = await Promise.all([
+    prisma.user.findMany({
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        name: true,
+        isAdmin: true,
+        isActive: true,
+        createdAt: true,
+        _count: {
+          select: {
+            topics: true,
+            votes: true,
+          },
         },
       },
-    },
-    orderBy: { createdAt: 'desc' },
-  });
+      orderBy: { createdAt: 'desc' },
+    }),
+    getActiveUserCount(),
+  ]);
 
-  return NextResponse.json(users);
+  return NextResponse.json({
+    users,
+    activeCount,
+    maxActiveUsers: MAX_ACTIVE_USERS,
+  });
 }
 
 const createUserSchema = z.object({
@@ -49,6 +58,7 @@ const createUserSchema = z.object({
   password: z.string().min(8),
   name: z.string().min(1).max(100),
   isAdmin: z.boolean().optional().default(false),
+  isActive: z.boolean().optional().default(true),
 });
 
 export async function POST(request: NextRequest) {
@@ -68,7 +78,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { username, email, password, name, isAdmin } = result.data;
+    const { username, email, password, name, isAdmin, isActive } = result.data;
+
+    if (isActive) {
+      const canCreate = await canCreateActiveUser();
+      if (!canCreate) {
+        return NextResponse.json(
+          { error: `Cannot create active user. Maximum of ${MAX_ACTIVE_USERS} active users reached.` },
+          { status: 403 }
+        );
+      }
+    }
 
     const existingUser = await prisma.user.findFirst({
       where: {
@@ -92,6 +112,7 @@ export async function POST(request: NextRequest) {
         password: hashedPassword,
         name,
         isAdmin,
+        isActive,
       },
       select: {
         id: true,
@@ -99,6 +120,7 @@ export async function POST(request: NextRequest) {
         email: true,
         name: true,
         isAdmin: true,
+        isActive: true,
         createdAt: true,
       },
     });

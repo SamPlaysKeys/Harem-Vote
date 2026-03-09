@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { hash } from 'bcryptjs';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { canCreateActiveUser, MAX_ACTIVE_USERS } from '@/lib/user-limits';
 import { z } from 'zod';
 
 type RouteParams = {
@@ -27,6 +28,7 @@ const updateUserSchema = z.object({
   password: z.string().min(8).optional(),
   name: z.string().min(1).max(100).optional(),
   isAdmin: z.boolean().optional(),
+  isActive: z.boolean().optional(),
 });
 
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
@@ -108,6 +110,19 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       updateData.isAdmin = result.data.isAdmin;
     }
 
+    if (result.data.isActive !== undefined) {
+      if (result.data.isActive && !existingUser.isActive) {
+        const canActivate = await canCreateActiveUser();
+        if (!canActivate) {
+          return NextResponse.json(
+            { error: `Cannot activate user. Maximum of ${MAX_ACTIVE_USERS} active users reached.` },
+            { status: 403 }
+          );
+        }
+      }
+      updateData.isActive = result.data.isActive;
+    }
+
     const user = await prisma.user.update({
       where: { id: userId },
       data: updateData,
@@ -117,6 +132,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         email: true,
         name: true,
         isAdmin: true,
+        isActive: true,
         createdAt: true,
       },
     });
