@@ -1,6 +1,6 @@
 # Project Progress Tracker
 
-## Status: Phase 1 Complete
+## Status: Phase 4 Complete
 
 ### Phase 1: Project Initialization
 
@@ -10,26 +10,26 @@
 
 ### Phase 2: Database & Authentication
 
-- [ ] Setup Prisma ORM and connect to PostgreSQL.
-- [ ] Define database schema (User, Topic, Option, Vote).
-- [ ] Run initial database migrations.
-- [ ] Implement NextAuth.js with Google Provider.
-- [ ] Implement Anonymous User session/state handling.
+- [x] Setup Prisma ORM and connect to PostgreSQL.
+- [x] Define database schema (User, Topic, Option, Vote).
+- [x] Run initial database migrations.
+- [x] Implement NextAuth.js with Google Provider.
+- [x] Implement Anonymous User session/state handling.
 
 ### Phase 3: Core API Development
 
-- [ ] Create API route: `POST /api/topics` (Create topic & options).
-- [ ] Create API route: `GET /api/topics/active` (Fetch current topic).
-- [ ] Create API route: `POST /api/votes` (Cast vote, handle Auth vs Anon logic).
-- [ ] Create API route: `POST /api/topics/[id]/close` (Close topic, tally, and trigger email).
+- [x] Create API route: `POST /api/topics` (Create topic & options).
+- [x] Create API route: `GET /api/topics/active` (Fetch current topic).
+- [x] Create API route: `POST /api/votes` (Cast vote, handle Auth vs Anon logic).
+- [x] Create API route: `POST /api/topics/[id]/close` (Close topic, tally, and trigger email).
 
 ### Phase 4: Frontend Development
 
-- [ ] Build Login / Landing Page.
-- [ ] Build Navigation / Layout (Auth state dependent).
-- [ ] Build Topic Creation Form (for Authenticated users).
-- [ ] Build Voting Interface (display question and options).
-- [ ] Build Results Dashboard (Integrate Chart library to show Auth vs Anon votes).
+- [x] Build Login / Landing Page.
+- [x] Build Navigation / Layout (Auth state dependent).
+- [x] Build Topic Creation Form (for Authenticated users).
+- [x] Build Voting Interface (display question and options).
+- [x] Build Results Dashboard (Integrate Chart library to show Auth vs Anon votes).
 
 ### Phase 5: Email & Notifications
 
@@ -41,4 +41,14 @@
 
 - [ ] Write `Dockerfile` for the Next.js app.
 - [ ] Update `docker-compose.yml` for production-ready VPS deployment.
+- [ ] Create Ansible playbook for VPS deployment (`ansible/`).
 - [ ] Write deployment instructions (`DEPLOY.md`).
+
+### Phase 7: Production Auth Setup (Manual)
+
+- [ ] Create Google OAuth credentials at https://console.cloud.google.com/apis/credentials
+- [ ] Configure OAuth consent screen with app name and authorized domains.
+- [ ] Create OAuth 2.0 Client ID (Web application type).
+- [ ] Add authorized redirect URI: `https://yourdomain.com/api/auth/callback/google`
+- [ ] Update `.env.local` with `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`.
+- [ ] Remove or disable the Dev Login credentials provider for production.
