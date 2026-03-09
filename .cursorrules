@@ -1,0 +1,210 @@
+# Gemini Workspace - DevOps Examples and Troubleshooting
+
+This workspace contains practical DevOps examples, configurations, and troubleshooting guides for enterprise Kubernetes and OpenShift environments.
+
+## Project Contents
+
+### Ansible Examples (`ansible-examples/`)
+Ansible playbooks demonstrating specific patterns and use cases:
+- Retry and error handling patterns
+- Conditional execution and blocks
+- Parallel execution via bastion hosts
+- ISO boot monitoring and validation
+- IP subnet validation
+- Global defaults and role inheritance
+- Dell hardware memory validation
+- REST API result filtering
+
+### ArgoCD Examples (`argo-examples/`)
+ArgoCD and GitOps configurations:
+- Multi-hub GitOps pipelines
+- Application and chart configurations
+- Infrastructure as Code patterns
+- GitHub workflow integrations
+
+### OpenShift Examples (`ocp-examples/`)
+OpenShift cluster configurations:
+- OVN-Kubernetes networking configurations
+- Install config templates and examples
+
+### OpenShift Troubleshooting (`ocp-troubleshooting/`)
+Systematic troubleshooting guides with investigation workflows:
+- API slowness and web console issues
+- Bare metal node inspection timeouts
+- Control plane kubeconfig recovery
+- CoreOS networking issues
+- CSR management
+- Cluster destruction without metadata
+- Kube-controller-manager crashloops
+- KubeVirt VM provisioning issues
+- Namespace termination issues
+- Portworx CSI troubleshooting
+- Worker node TLS certificate failures
+
+### RHACM Examples (`rhacm-examples/`)
+Red Hat Advanced Cluster Management configurations:
+- Secret management patterns
+- Multi-cluster management
+- Policy and governance examples
+
+### CoreOS Examples (`coreos-examples/`)
+CoreOS Butane configurations:
+- ISO ejection after installation
+- First-boot automation
+
+## Development Guidelines
+
+### Documentation Standards
+- Each example should have a clear README with:
+  - Purpose and use case
+  - Prerequisites and requirements
+  - Step-by-step instructions
+  - Expected outcomes
+  - Troubleshooting section
+- Include inline comments in configuration files
+- Provide both simple and advanced examples where appropriate
+
+### Configuration Files
+- Use descriptive variable names
+- Include example inventories/configurations
+- Document all required variables
+- Provide safe defaults where possible
+- Include validation steps
+
+### Troubleshooting Guides
+- Start with symptom identification
+- Provide investigation workflow
+- Include diagnostic commands
+- Explain root cause analysis
+- Document resolution steps
+- Add verification procedures
+- Include prevention recommendations
+
+### Testing
+- Test all playbooks and configurations before committing
+- Validate YAML syntax
+- Check for hardcoded values that should be variables
+- Verify idempotency where applicable
+
+### Security
+- Never commit secrets or credentials
+- Use Ansible Vault for sensitive data
+- Document secret management approach
+- Follow principle of least privilege
+- Include RBAC configurations where needed
+
+### Git Workflow
+- Use clear, descriptive commit messages
+- Reference related issues or tickets
+- Keep commits focused on single changes
+- Update documentation with code changes
+
+## AI Disclosure
+Per project standards, all AI-assisted work includes disclosure notices in relevant files.
+
+## Quick Reference
+
+### Common Patterns
+- Ansible retry patterns: See `ansible-examples/001_retry_on_timeout/`
+- Error handling: See `ansible-examples/002_log_ignored_errors/`
+- Parallel execution: See `ansible-examples/006_parallel_execution_via_bastion/`
+- ArgoCD apps: See `argo-examples/apps/` and `argo-examples/charts/`
+- OCP troubleshooting: See individual guides in `ocp-troubleshooting/`
+
+### Useful Commands
+- Ansible syntax check: `ansible-playbook --syntax-check playbook.yml`
+- Ansible dry run: `ansible-playbook --check playbook.yml`
+- ArgoCD sync: `argocd app sync <app-name>`
+- OpenShift logs: `oc logs <pod> -n <namespace>`
+- Check cluster operators: `oc get clusteroperators`
+
+## TÂCHES Resources Integration
+
+This workspace has TÂCHES resources fully integrated with native Cursor features.
+
+**Source:** [TÂCHES Claude Code Resources](https://github.com/glittercowboy/taches-cc-resources)
+
+### Slash Commands (Native Support!)
+
+Cursor auto-discovers commands in `.cursor/commands/`. Use them like built-in commands:
+
+```
+/create-plan Build a REST API with authentication
+/debug
+/whats-next
+/create-agent-skill Document our deployment process
+```
+
+**Thinking Frameworks:**
+```
+/consider:first-principles
+/consider:5-whys
+/consider:pareto
+```
+
+**Context Management:**
+```
+/whats-next - Create handoff document
+/add-to-todos - Capture ideas
+/check-todos - Review tasks
+```
+
+### Skills (Reference with @)
+
+Load skills for deep methodologies:
+
+```
+@.cursor/skills/debug-like-expert/SKILL.md
+@.cursor/skills/create-plans/SKILL.md
+@.cursor/skills/create-agent-skills/SKILL.md
+```
+
+### Available Resources
+
+**Slash Commands (19 commands):**
+- Project: `/create-plan`, `/create-prompt`, `/run-prompt`
+- Meta: `/create-agent-skill`, `/create-slash-command`, `/create-subagent`
+- Debug: `/debug`
+- Context: `/whats-next`, `/add-to-todos`, `/check-todos`
+- Audit: `/audit-skill`, `/audit-slash-command`, `/audit-subagent`
+- Frameworks: `/consider:first-principles`, `/consider:5-whys`, etc. (12 total)
+
+**Skills (10 total):**
+- `create-plans/` - Project planning
+- `debug-like-expert/` - Systematic debugging
+- `create-agent-skills/` - Documentation creation
+- `create-meta-prompts/` - Workflow design
+- `create-slash-commands/` - Command patterns
+- `create-subagents/` - Agent design
+- `create-hooks/` - Event automation
+- `create-mcp-servers/` - MCP development
+- `setup-ralph/` - Ralph autonomous loop
+- `expertise/` - Domain knowledge (iOS, macOS, n8n)
+
+**Agents (3 total):**
+- `skill-auditor.md` - Evaluate procedures
+- `slash-command-auditor.md` - Review commands
+- `subagent-auditor.md` - Assess agents
+
+### Quick Reference
+
+**Planning:** `/create-plan [description]`  
+**Debugging:** `/debug` then describe issue  
+**Handoff:** `/whats-next`  
+**Thinking:** `/consider:first-principles`
+
+**Full docs:** `@.cursor/README.md`
+
+### For Claude Code Users
+
+TÂCHES is also installed in `~/.claude/` for Claude Code with identical slash command support.
+
+### Platform Comparison
+
+| Feature | Claude Code | Cursor |
+|---------|-------------|--------|
+| Commands | ✅ Auto-registered | ✅ Auto-registered |
+| Slash Syntax | ✅ `/command` | ✅ `/command` |
+| Skills | ✅ `Skill()` invocation | ⚠️ `@.cursor/skills/` |
+| Agents | ✅ Spawn subagents | ⚠️ `@.cursor/agents/` |
+
