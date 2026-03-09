@@ -1,0 +1,29 @@
+# Application settings
+app_name: haremvote
+app_dir: /opt/haremvote
+app_port: 3000
+
+# Git repository (set to your repo URL)
+git_repo: https://github.com/yourusername/harem-vote.git
+git_branch: main
+
+# Database
+postgres_user: haremvote
+postgres_password: "{{ vault_postgres_password }}"
+postgres_db: haremvote
+
+# NextAuth
+nextauth_url: "https://{{ domain_name }}"
+nextauth_secret: "{{ vault_nextauth_secret }}"
+
+# Admin user
+admin_username: admin
+admin_password: "{{ vault_admin_password }}"
+admin_email: "admin@{{ domain_name }}"
+
+# App branding
+app_title: "Harem Vote"
+app_message: ""
+
+# Domain (used for NEXTAUTH_URL)
+domain_name: yourdomain.com

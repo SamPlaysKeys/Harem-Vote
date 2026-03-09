@@ -1,6 +1,6 @@
 # Project Progress Tracker
 
-## Status: Phase 4 Complete
+## Status: Phase 6 Complete (Phase 5 Skipped)
 
 ### Phase 1: Project Initialization
 
@@ -41,10 +41,10 @@
 
 ### Phase 6: Deployment Prep
 
-- [ ] Write `Dockerfile` for the Next.js app.
-- [ ] Update `docker-compose.yml` for production-ready VPS deployment.
-- [ ] Create Ansible playbook for VPS deployment (`ansible/`).
-- [ ] Write deployment instructions (`DEPLOY.md`).
+- [x] Write `Dockerfile` for the Next.js app.
+- [x] Update `docker-compose.yml` for production-ready VPS deployment.
+- [x] Create Ansible playbook for VPS deployment (`ansible/`).
+- [x] Write deployment instructions (`DEPLOY.md`).
 
 ### Phase 7: Production Setup (Manual)
 

@@ -1,0 +1,59 @@
+---
+- name: Create application directory
+  file:
+    path: "{{ app_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Clone/update repository
+  git:
+    repo: "{{ git_repo }}"
+    dest: "{{ app_dir }}"
+    version: "{{ git_branch }}"
+    force: yes
+  register: git_result
+
+- name: Create .env file from template
+  template:
+    src: env.j2
+    dest: "{{ app_dir }}/.env"
+    mode: '0600'
+
+- name: Build and start containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ app_dir }}"
+    files:
+      - docker-compose.prod.yml
+    build: always
+    state: present
+  register: compose_result
+
+- name: Run database migrations
+  community.docker.docker_compose_v2:
+    project_src: "{{ app_dir }}"
+    files:
+      - docker-compose.prod.yml
+    profiles:
+      - migrate
+    state: present
+  when: git_result.changed or compose_result.changed
+
+- name: Wait for app to be ready
+  uri:
+    url: "http://localhost:{{ app_port }}"
+    status_code: 200
+  register: result
+  until: result.status == 200
+  retries: 30
+  delay: 5
+
+- name: Seed admin user
+  uri:
+    url: "http://localhost:{{ app_port }}/api/admin/seed"
+    method: GET
+  register: seed_result
+  changed_when: seed_result.json.action == 'created'
+
+- name: Display seed result
+  debug:
+    msg: "Admin seed: {{ seed_result.json.message }}"

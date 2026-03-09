@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: haremvote-app
+    restart: unless-stopped
+    ports:
+      - '${APP_PORT:-3000}:3000'
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-haremvote}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-haremvote}
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@localhost}
+      NEXT_PUBLIC_APP_TITLE: ${NEXT_PUBLIC_APP_TITLE:-Harem Vote}
+      NEXT_PUBLIC_APP_MESSAGE: ${NEXT_PUBLIC_APP_MESSAGE:-}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - haremvote-network
+
+  db:
+    image: postgres:16-alpine
+    container_name: haremvote-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-haremvote}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-haremvote}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-haremvote} -d ${POSTGRES_DB:-haremvote}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - haremvote-network
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: haremvote-migrate
+    command: npx prisma migrate deploy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-haremvote}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-haremvote}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - haremvote-network
+    profiles:
+      - migrate
+
+volumes:
+  postgres_data:
+
+networks:
+  haremvote-network:
+    driver: bridge

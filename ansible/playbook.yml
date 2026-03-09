@@ -1,0 +1,23 @@
+---
+- name: Deploy Harem Vote Application
+  hosts: all
+  become: yes
+
+  pre_tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+  roles:
+    - docker
+    - app
+
+  post_tasks:
+    - name: Display deployment info
+      debug:
+        msg:
+          - "Deployment complete!"
+          - "Application URL: {{ nextauth_url }}"
+          - "Admin username: {{ admin_username }}"
+          - "Remember to set up SSL/TLS (e.g., with nginx + certbot)"

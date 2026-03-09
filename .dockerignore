@@ -1,0 +1,29 @@
+# Dependencies
+node_modules
+npm-debug.log
+
+# Next.js
+.next
+out
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Environment (use Docker secrets or env vars instead)
+.env
+.env.*
+!.env.example
+
+# Misc
+README.md
+DEPLOY.md
+*.md
+.cursor
+ansible

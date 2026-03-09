@@ -1,0 +1,6 @@
+# Copy this file to vault.yml and encrypt with: ansible-vault encrypt vault.yml
+# These are sensitive values that should not be committed to git
+
+vault_postgres_password: "your_secure_postgres_password"
+vault_nextauth_secret: "generate_with_openssl_rand_base64_32"
+vault_admin_password: "your_secure_admin_password"
