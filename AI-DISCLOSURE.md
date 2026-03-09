@@ -50,6 +50,7 @@ This workspace was created with substantial assistance from Claude Code (Anthrop
 ```
 
 **Questions to ask:**
+
 - What does this code/configuration actually do?
 - What assumptions does it make about my environment?
 - What could go wrong if this runs?
@@ -63,6 +64,7 @@ This workspace was created with substantial assistance from Claude Code (Anthrop
 ```
 
 **Testing checklist:**
+
 - [ ] Run in isolated test environment
 - [ ] Verify expected behavior occurs
 - [ ] Test error conditions and edge cases
@@ -77,6 +79,7 @@ This workspace was created with substantial assistance from Claude Code (Anthrop
 ```
 
 **Resources to check:**
+
 - Official tool documentation (Ansible, ArgoCD, OpenShift, etc.)
 - Vendor best practices guides
 - Community forums and support channels
@@ -90,6 +93,7 @@ This workspace was created with substantial assistance from Claude Code (Anthrop
 ```
 
 **What to customize:**
+
 - Credentials and authentication methods
 - IP addresses, hostnames, and network configuration
 - Resource limits and sizing
@@ -104,6 +108,7 @@ This workspace was created with substantial assistance from Claude Code (Anthrop
 ```
 
 **Security considerations:**
+
 - Are credentials hardcoded? (They should never be in production)
 - Are there overly permissive access controls?
 - Is sensitive data exposed in logs or outputs?
@@ -118,6 +123,7 @@ This workspace was created with substantial assistance from Claude Code (Anthrop
 ```
 
 **Version checks:**
+
 - Tool versions (Ansible, kubectl, oc, etc.)
 - API versions (Kubernetes, OpenShift, ArgoCD)
 - Module/library versions
@@ -128,6 +134,7 @@ This workspace was created with substantial assistance from Claude Code (Anthrop
 ### Ansible Playbooks
 
 **Validate:**
+
 - Module names and parameters match your Ansible version
 - Inventory structure fits your infrastructure
 - Credential handling is secure (use Ansible Vault)
@@ -135,6 +142,7 @@ This workspace was created with substantial assistance from Claude Code (Anthrop
 - Privilege escalation (become) is necessary and safe
 
 **Test:**
+
 - Run with `--check` mode first
 - Validate against small subset of hosts
 - Review changes before applying broadly
@@ -142,12 +150,14 @@ This workspace was created with substantial assistance from Claude Code (Anthrop
 ### ArgoCD Configurations
 
 **Validate:**
+
 - API versions match your ArgoCD/Kubernetes versions
 - Repository URLs and paths are correct
 - Sync policies align with your deployment strategy
 - RBAC configurations follow least-privilege principle
 
 **Test:**
+
 - Deploy to test cluster first
 - Verify sync behavior matches expectations
 - Test rollback procedures
@@ -155,11 +165,13 @@ This workspace was created with substantial assistance from Claude Code (Anthrop
 ### OpenShift Troubleshooting Scripts
 
 **Validate:**
+
 - Commands work with your OpenShift version
 - Script has appropriate permissions (read-only vs. admin)
 - Output interpretation is correct for your cluster
 
 **Test:**
+
 - Run read-only commands first
 - Verify in test cluster before production
 - Review all actions before executing
@@ -167,12 +179,14 @@ This workspace was created with substantial assistance from Claude Code (Anthrop
 ### CoreOS/Ignition Configurations
 
 **Validate:**
+
 - Butane syntax is correct for your version
 - File paths and permissions are appropriate
 - Service definitions work with systemd
 - Security context is properly configured
 
 **Test:**
+
 - Test Ignition files with coreos-installer --check
 - Deploy to test VM/system first
 - Verify all services start correctly
@@ -266,5 +280,4 @@ AI-generated content can be valuable for learning, starting points, and referenc
 
 ---
 
-*This disclosure document was itself created with AI assistance, demonstrating both the capabilities and the need for human oversight of AI-generated content.*
-
+_This disclosure document was itself created with AI assistance, demonstrating both the capabilities and the need for human oversight of AI-generated content._

@@ -1,6 +1,9 @@
 # Dependencies
 node_modules/
 
+# Cursor skills/templates
+.cursor/
+
 # Build outputs
 .next/
 out/
