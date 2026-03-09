@@ -18,5 +18,23 @@ services:
       timeout: 5s
       retries: 5
 
+  # Uncomment to run the app in Docker
+  # app:
+  #   build: .
+  #   container_name: haremvote-app
+  #   ports:
+  #     - '3000:3000'
+  #   environment:
+  #     DATABASE_URL: postgresql://haremvote:localdev@db:5432/haremvote
+  #     NEXTAUTH_URL: http://localhost:3000
+  #     NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+  #     # Admin user created on first startup
+  #     ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+  #     ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+  #     ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@localhost}
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+
 volumes:
   postgres_data:

@@ -1,6 +1,6 @@
 'use client';
 
-import { useSession, signIn, signOut } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 
 export function Header() {
@@ -34,12 +34,20 @@ export function Header() {
               >
                 History
               </Link>
+              {session.user.isAdmin && (
+                <Link
+                  href="/admin"
+                  className="text-sm text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300"
+                >
+                  Admin
+                </Link>
+              )}
               <div className="flex items-center gap-3">
                 <span className="text-sm text-zinc-600 dark:text-zinc-400">
-                  {session.user.name || session.user.email}
+                  {session.user.name || session.user.username}
                 </span>
                 <button
-                  onClick={() => signOut()}
+                  onClick={() => signOut({ callbackUrl: '/' })}
                   className="text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-500 dark:hover:text-zinc-300"
                 >
                   Sign out
@@ -54,12 +62,12 @@ export function Header() {
               >
                 History
               </Link>
-              <button
-                onClick={() => signIn()}
+              <Link
+                href="/login"
                 className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
               >
                 Sign in
-              </button>
+              </Link>
             </>
           )}
         </nav>

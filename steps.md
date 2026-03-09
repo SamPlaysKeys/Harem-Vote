@@ -13,8 +13,10 @@
 - [x] Setup Prisma ORM and connect to PostgreSQL.
 - [x] Define database schema (User, Topic, Option, Vote).
 - [x] Run initial database migrations.
-- [x] Implement NextAuth.js with Google Provider.
+- [x] Implement NextAuth.js with username/password credentials.
 - [x] Implement Anonymous User session/state handling.
+- [x] Add admin user support with environment variable seeding.
+- [x] Create admin user management page (`/admin`).
 
 ### Phase 3: Core API Development
 
@@ -44,11 +46,9 @@
 - [ ] Create Ansible playbook for VPS deployment (`ansible/`).
 - [ ] Write deployment instructions (`DEPLOY.md`).
 
-### Phase 7: Production Auth Setup (Manual)
+### Phase 7: Production Setup (Manual)
 
-- [ ] Create Google OAuth credentials at https://console.cloud.google.com/apis/credentials
-- [ ] Configure OAuth consent screen with app name and authorized domains.
-- [ ] Create OAuth 2.0 Client ID (Web application type).
-- [ ] Add authorized redirect URI: `https://yourdomain.com/api/auth/callback/google`
-- [ ] Update `.env.local` with `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`.
-- [ ] Remove or disable the Dev Login credentials provider for production.
+- [ ] Set strong `NEXTAUTH_SECRET` in production environment.
+- [ ] Configure `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `ADMIN_EMAIL` environment variables.
+- [ ] Call `/api/admin/seed` on first deployment to create admin user.
+- [ ] (Optional) Add Google OAuth by configuring credentials and updating `src/lib/auth.ts`.

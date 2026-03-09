@@ -1,54 +1,50 @@
 import NextAuth from 'next-auth';
-import Google from 'next-auth/providers/google';
 import Credentials from 'next-auth/providers/credentials';
-import { PrismaAdapter } from '@auth/prisma-adapter';
+import { compare } from 'bcryptjs';
 import { prisma } from './prisma';
 
-const useGoogleAuth =
-  process.env.GOOGLE_CLIENT_ID &&
-  process.env.GOOGLE_CLIENT_ID !== 'your-google-client-id';
-
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
   session: {
-    strategy: useGoogleAuth ? 'database' : 'jwt',
+    strategy: 'jwt',
+  },
+  pages: {
+    signIn: '/login',
   },
   providers: [
-    ...(useGoogleAuth
-      ? [
-          Google({
-            clientId: process.env.GOOGLE_CLIENT_ID!,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-          }),
-        ]
-      : []),
     Credentials({
-      name: 'Dev Login',
+      name: 'credentials',
       credentials: {
-        email: { label: 'Email', type: 'email', placeholder: 'dev@example.com' },
-        name: { label: 'Name', type: 'text', placeholder: 'Dev User' },
+        username: { label: 'Username', type: 'text' },
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials?.email) return null;
+        if (!credentials?.username || !credentials?.password) {
+          return null;
+        }
 
-        const email = credentials.email as string;
-        const name = (credentials.name as string) || 'Dev User';
+        const username = credentials.username as string;
+        const password = credentials.password as string;
 
-        let user = await prisma.user.findUnique({
-          where: { email },
+        const user = await prisma.user.findUnique({
+          where: { username },
         });
 
         if (!user) {
-          user = await prisma.user.create({
-            data: { email, name },
-          });
+          return null;
+        }
+
+        const isValidPassword = await compare(password, user.password);
+
+        if (!isValidPassword) {
+          return null;
         }
 
         return {
           id: user.id,
           email: user.email,
           name: user.name,
-          image: user.image,
+          username: user.username,
+          isAdmin: user.isAdmin,
         };
       },
     }),
@@ -57,12 +53,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.username = user.username;
+        token.isAdmin = user.isAdmin;
       }
       return token;
     },
-    async session({ session, token, user }) {
+    async session({ session, token }) {
       if (session.user) {
-        session.user.id = (user?.id || token?.id) as string;
+        session.user.id = token.id as string;
+        session.user.username = token.username as string;
+        session.user.isAdmin = token.isAdmin as boolean;
       }
       return session;
     },
