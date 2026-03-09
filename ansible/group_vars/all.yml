@@ -4,26 +4,26 @@ app_dir: /opt/haremvote
 app_port: 3000
 
 # Git repository (set to your repo URL)
-git_repo: https://github.com/yourusername/harem-vote.git
+git_repo: https://github.com/SamPlaysKeys/Harem-Vote
 git_branch: main
 
 # Database
 postgres_user: haremvote
-postgres_password: "{{ vault_postgres_password }}"
+postgres_password: "{{ vault_postgres_password | default('CHANGE_ME_postgres') }}"
 postgres_db: haremvote
 
 # NextAuth
-nextauth_url: "https://{{ domain_name }}"
-nextauth_secret: "{{ vault_nextauth_secret }}"
+nextauth_url: "https://oracle1.{{ domain_name }}"
+nextauth_secret: "{{ vault_nextauth_secret | default('CHANGE_ME_nextauth_secret') }}"
 
 # Admin user
-admin_username: admin
-admin_password: "{{ vault_admin_password }}"
+admin_username: sfadmin
+admin_password: "{{ vault_admin_password | default('CHANGE_ME_admin') }}"
 admin_email: "admin@{{ domain_name }}"
 
 # App branding
 app_title: "Harem Vote"
-app_message: ""
+app_message: "This test instance is running on Oracle"
 
 # Domain (used for NEXTAUTH_URL)
-domain_name: yourdomain.com
+domain_name: samplayskeys.ts.net

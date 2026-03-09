@@ -1,0 +1,33 @@
+---
+- name: Test Vault Variables
+  hosts: all
+  gather_facts: no
+
+  vars_files:
+    - group_vars/all.yml
+    - group_vars/vault.yml
+
+  tasks:
+    - name: Display vault_postgres_password
+      debug:
+        msg: "vault_postgres_password = {{ vault_postgres_password | default('NOT SET') }}"
+
+    - name: Display vault_nextauth_secret
+      debug:
+        msg: "vault_nextauth_secret = {{ vault_nextauth_secret | default('NOT SET') }}"
+
+    - name: Display vault_admin_password
+      debug:
+        msg: "vault_admin_password = {{ vault_admin_password | default('NOT SET') }}"
+
+    - name: Display resolved postgres_password
+      debug:
+        msg: "postgres_password = {{ postgres_password }}"
+
+    - name: Display resolved nextauth_secret
+      debug:
+        msg: "nextauth_secret = {{ nextauth_secret }}"
+
+    - name: Display resolved admin_password
+      debug:
+        msg: "admin_password = {{ admin_password }}"
