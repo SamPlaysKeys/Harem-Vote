@@ -9,15 +9,17 @@ datasource db {
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
+  username  String   @unique
+  password  String
   name      String?
   image     String?
-  googleId  String?  @unique
+  isAdmin   Boolean  @default(false)
   createdAt DateTime @default(now())
 
   topics Topic[]
   votes  Vote[]
 
-  // NextAuth.js required fields
+  // NextAuth.js required fields (kept for compatibility)
   emailVerified DateTime?
   accounts      Account[]
   sessions      Session[]
