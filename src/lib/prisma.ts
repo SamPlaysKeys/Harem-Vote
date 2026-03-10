@@ -1,7 +1,6 @@
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
-import { defineConfig } from "@prisma/internals";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient;
@@ -22,10 +21,3 @@ if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.pool = pool;
 }
 
-export default defineConfig({
-  datasources: {
-    db: {
-      url: process.env.DATABASE_URL,
-    },
-  },
-});
